@@ -29,14 +29,18 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-6">
+                        <div class="row mb-4">
+                            <div class="col-4">
                                 <h5 class="card-title font-weight-bold">Type</h5>
                                 <p class="card-text">{{ $symmetricKey->type->name }}</p>
                             </div>
-                            <div class="col-6">
+                            <div class="col-4">
                                 <h5 class="card-title font-weight-bold">Bytes</h5>
                                 <p class="card-text">{{ $symmetricKey->bits->bytes() }}</p>
+                            </div>
+                            <div class="col-4">
+                                <h5 class="card-title font-weight-bold">Key</h5>
+                                <p class="card-text">{{ $symmetricKey->decryptKey() }}</p>
                             </div>
                         </div>
                     </div>
