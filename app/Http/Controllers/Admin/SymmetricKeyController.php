@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class SymmetricKeyController extends Controller
 {
-
     public function index(): View
     {
         $keys = SymmetricKey::whereBelongsTo(Auth::user())
