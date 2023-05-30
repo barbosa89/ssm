@@ -30,17 +30,21 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row mb-4">
-                            <div class="col-4">
+                            <div class="col-3">
+                                <h5 class="card-title font-weight-bold">Key</h5>
+                                <p class="card-text">{{ $symmetricKey->decryptKey() }}</p>
+                            </div>
+                            <div class="col-3">
+                                <h5 class="card-title font-weight-bold">KCV</h5>
+                                <p class="card-text">{{ $symmetricKey->getKCV() }}</p>
+                            </div>
+                            <div class="col-3">
                                 <h5 class="card-title font-weight-bold">Type</h5>
                                 <p class="card-text">{{ $symmetricKey->type->name }}</p>
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
                                 <h5 class="card-title font-weight-bold">Bytes</h5>
                                 <p class="card-text">{{ $symmetricKey->bits->bytes() }}</p>
-                            </div>
-                            <div class="col-4">
-                                <h5 class="card-title font-weight-bold">Key</h5>
-                                <p class="card-text">{{ $symmetricKey->decryptKey() }}</p>
                             </div>
                         </div>
                     </div>

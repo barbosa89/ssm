@@ -17,7 +17,7 @@
                             <p class="card-text">{{ cryptogram }}</p>
                         </div>
                         <div class="col-6">
-                            <h5 class="card-title font-weight-bold">Key check value</h5>
+                            <h5 class="card-title font-weight-bold">Transport key KCV</h5>
                             <p class="card-text">{{ kcv }}</p>
                         </div>
                     </div>
@@ -29,7 +29,7 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Component</th>
-                                        <th scope="col">Key check value</th>
+                                        <th scope="col">Component KCV</th>
                                     </tr>
                                 </thead>
                                 <tbody>
