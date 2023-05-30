@@ -3,15 +3,14 @@
 @section('content')
     <div class="container">
         <div class="row mb-4">
-            <div class="col-10">
+            <div class="col-8">
                 <h1><small>{{ $symmetricKey->description }}</small></h1>
             </div>
-            <div class="col-2 text-end align-self-center">
+            <div class="col-4 text-end align-self-center">
                 <a
                     href="#"
                     class="btn btn-outline-dark"
-                    data-bs-toggle="modal"
-                    data-bs-target="#destroyModal{{ $symmetricKey->id }}">
+                    onclick="event.preventDefault(); if (confirm('Delete key?')) { document.getElementById('destroyForm{{ $symmetricKey->id }}').submit(); }">
                     Delete
                 </a>
 
@@ -24,6 +23,14 @@
                 <a class="btn btn-dark ms-2" href="{{ route('admin.symmetrics.index') }}">Back</a>
             </div>
         </div>
+
+        <form
+            action="{{ route('admin.symmetrics.destroy', $symmetricKey) }}"
+            id="destroyForm{{ $symmetricKey->id }}"
+            method="POST">
+            @csrf
+            @method('DELETE')
+        </form>
 
         <div class="row mb-4">
             <div class="col">
@@ -52,11 +59,54 @@
             </div>
         </div>
 
-        <key-split :secret-key='@json($symmetricKey)'></key-split>
+        <div class="row mb-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h5 class="card-title font-weight-bold">Cryptogram</h5>
+                                <p class="card-text">{{ $cryptogram }}</p>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="card-title font-weight-bold">Transport key KCV</h5>
+                                <p class="card-text">{{ $kcv }}</p>
+                            </div>
+                        </div>
 
-        <x-destroy-modal
-            :id="$symmetricKey->id"
-            :route="route('admin.symmetrics.destroy', $symmetricKey)">
-        </x-destroy-modal>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Component</th>
+                                            <th scope="col">Component KCV</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($components as $component)
+                                            <tr>
+                                                <th scope="row">{{ $loop->iteration }}</th>
+                                                <td>{{ $component['component'] }}</td>
+                                                <td>{{ $component['kcv'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-outline-dark" onclick="window.location.reload()">
+                                    Refresh transport key
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection

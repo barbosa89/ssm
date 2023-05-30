@@ -7,10 +7,12 @@ use App\Constants\SymmetricKeyTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreOrUpdateSymmetricKeyRequest;
 use App\Models\SymmetricKey;
+use App\Util\Binary;
 use App\Util\KeyGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use phpseclib3\Crypt\TripleDES;
 
 class SymmetricKeyController extends Controller
 {
@@ -49,7 +51,21 @@ class SymmetricKeyController extends Controller
             ->where('id', $key)
             ->firstOrFail(['id', 'description', 'key', 'type', 'bits', 'created_at']);
 
-        return view('admin.symmetric_keys.show', compact('symmetricKey'));
+        ['key' => $key, 'components' => $components] = KeyGenerator::combination($symmetricKey->bits);
+
+        $cipher = new TripleDES('ECB');
+        $cipher->setKey($key);
+
+        $secret = hex2bin($symmetricKey->decryptKey());
+
+        $cryptogram = $cipher->encrypt($secret);
+
+        return view('admin.symmetric_keys.show', [
+            'symmetricKey' => $symmetricKey,
+            'cryptogram' => Binary::toHex($cryptogram),
+            'kcv' => KeyGenerator::calculateKCV($key, $symmetricKey->bits),
+            'components' => $components,
+        ]);
     }
 
     public function edit(int $key): View

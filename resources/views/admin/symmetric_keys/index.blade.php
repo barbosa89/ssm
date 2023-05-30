@@ -20,7 +20,6 @@
                             <th scope="col">Description</th>
                             <th scope="col">Type</th>
                             <th scope="col">Bytes</th>
-                            <th scope="col">Date</th>
                             <th scope="col">Options</th>
                         </tr>
                     </thead>
@@ -28,54 +27,38 @@
                         @forelse ($keys as $key)
                             <tr>
                                 <th scope="row">{{ $loop->iteration }}</th>
-                                <td>{{ $key->description }}</td>
+                                <td>
+                                    <a href="{{ route('admin.symmetrics.show', $key) }}">
+                                        {{ $key->description }}
+                                    </a>
+                                </td>
                                 <td>{{ $key->type->name }}</td>
                                 <td>{{ $key->bits->bytes() }}</td>
-                                <td>{{ $key->created_at }}</td>
                                 <td>
-                                    <div class="dropdown">
-                                        <button
-                                            class="btn btn-ligth dropdown-toggle custom-dropdown-toggle"
-                                            type="button"
-                                            id="dropdownMenuButton{{ $loop->iteration }}"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                            <em class="bi bi-three-dots" style="font-size: 1.5rem;"></em>
-                                        </button>
+                                    <a
+                                        class="btn"
+                                        href="{{ route('admin.symmetrics.show', $key) }}">
+                                        Show
+                                    </a>
+                                    <a
+                                        class="btn"
+                                        href="{{ route('admin.symmetrics.edit', $key) }}">
+                                        Edit
+                                    </a>
+                                    <a
+                                        href="#"
+                                        class="btn"
+                                        onclick="event.preventDefault(); if (confirm('Delete key?')) { document.getElementById('destroyForm{{ $loop->iteration }}').submit(); }">
+                                        Delete
+                                    </a>
 
-                                        <ul
-                                            class="dropdown-menu"
-                                            aria-labelledby="dropdownMenuButton{{ $loop->iteration }}">
-                                            <li>
-                                                <a
-                                                    class="dropdown-item"
-                                                    href="{{ route('admin.symmetrics.show', $key) }}">
-                                                    Show
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a
-                                                    class="dropdown-item"
-                                                    href="{{ route('admin.symmetrics.edit', $key) }}">
-                                                    Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    class="dropdown-item"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#destroyModal{{ $loop->iteration }}">
-                                                    Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-
-                                        <x-destroy-modal
-                                            :id="$loop->iteration"
-                                            :route="route('admin.symmetrics.destroy', $key)">
-                                        </x-destroy-modal>
-                                    </div>
+                                    <form
+                                        action="{{ route('admin.symmetrics.destroy', $key) }}"
+                                        id="destroyForm{{ $loop->iteration }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
                                 </td>
                             </tr>
                         @empty

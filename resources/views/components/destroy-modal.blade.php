@@ -3,7 +3,7 @@
     tabindex="-1"
     aria-labelledby="destroyModalLabel{{ $id }}"
     aria-hidden="true">
-    <form action="{{ $route }}" method="POST">
+    <form action="{{ $route }}" id="destroyForm{{ $id }}" method="POST">
         @csrf
         @method('DELETE')
         <div class="modal-dialog modal-dialog-centered">
