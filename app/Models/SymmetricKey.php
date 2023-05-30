@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Constants\Bits;
 use App\Constants\SymmetricKeyTypes;
+use App\Util\KeyGenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,5 +32,10 @@ class SymmetricKey extends Model
     public function decryptKey(): string
     {
         return Crypt::decryptString($this->key);
+    }
+
+    public function getKCV(): string
+    {
+        return KeyGenerator::calculateKCV(hex2bin($this->decryptKey()), $this->bits);
     }
 }
