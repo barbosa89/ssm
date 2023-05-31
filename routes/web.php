@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SymmetricKeyComponentController;
 use App\Http\Controllers\Admin\SymmetricKeyController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,9 @@ Route::middleware('auth')
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::patch('symmetrics/{symmetric}/components', [SymmetricKeyComponentController::class, 'update'])
+            ->name('symmetrics.components.update');
+
         Route::delete('symmetrics/{symmetric}', [SymmetricKeyController::class, 'destroy'])
             ->name('symmetrics.destroy');
 

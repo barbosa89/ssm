@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\CreateSymmetricKeyComponents;
 use App\Constants\Bits;
 use App\Constants\SymmetricKeyTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreOrUpdateSymmetricKeyRequest;
 use App\Models\SymmetricKey;
-use App\Util\Binary;
 use App\Util\KeyGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use phpseclib3\Crypt\TripleDES;
 
 class SymmetricKeyController extends Controller
 {
@@ -38,7 +37,8 @@ class SymmetricKeyController extends Controller
         $symmetricKey->bits = Bits::Medium->value;
         $symmetricKey->key = KeyGenerator::make(Bits::Medium)->toBase64();
         $symmetricKey->user()->associate(Auth::user());
-        $symmetricKey->save();
+
+        CreateSymmetricKeyComponents::execute($symmetricKey);
 
         flash('Symmetric key was created successful')->success();
 
@@ -49,23 +49,10 @@ class SymmetricKeyController extends Controller
     {
         $symmetricKey = SymmetricKey::where('user_id', Auth::id())
             ->where('id', $key)
-            ->firstOrFail(['id', 'description', 'key', 'type', 'bits', 'created_at']);
+            ->with('components:id,component,kcv,symmetric_key_id')
+            ->firstOrFail(['id', 'description', 'key', 'type', 'bits', 'kcv', 'cryptogram', 'transport_key_kcv']);
 
-        ['key' => $key, 'components' => $components] = KeyGenerator::combination($symmetricKey->bits);
-
-        $cipher = new TripleDES('ECB');
-        $cipher->setKey($key);
-
-        $secret = hex2bin($symmetricKey->decryptKey());
-
-        $cryptogram = $cipher->encrypt($secret);
-
-        return view('admin.symmetric_keys.show', [
-            'symmetricKey' => $symmetricKey,
-            'cryptogram' => Binary::toHex($cryptogram),
-            'kcv' => KeyGenerator::calculateKCV($key, $symmetricKey->bits),
-            'components' => $components,
-        ]);
+        return view('admin.symmetric_keys.show', compact('symmetricKey'));
     }
 
     public function edit(int $key): View

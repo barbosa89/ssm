@@ -39,11 +39,11 @@
                         <div class="row mb-4">
                             <div class="col-3">
                                 <h5 class="card-title font-weight-bold">Key</h5>
-                                <p class="card-text">{{ $symmetricKey->decryptKey() }}</p>
+                                <p class="card-text">{{ $symmetricKey->getKey() }}</p>
                             </div>
                             <div class="col-3">
                                 <h5 class="card-title font-weight-bold">KCV</h5>
-                                <p class="card-text">{{ $symmetricKey->getKCV() }}</p>
+                                <p class="card-text">{{ $symmetricKey->kcv }}</p>
                             </div>
                             <div class="col-3">
                                 <h5 class="card-title font-weight-bold">Type</h5>
@@ -66,11 +66,11 @@
                         <div class="row mb-4">
                             <div class="col-6">
                                 <h5 class="card-title font-weight-bold">Cryptogram</h5>
-                                <p class="card-text">{{ $cryptogram }}</p>
+                                <p class="card-text">{{ $symmetricKey->getCryptogram() }}</p>
                             </div>
                             <div class="col-6">
                                 <h5 class="card-title font-weight-bold">Transport key KCV</h5>
-                                <p class="card-text">{{ $kcv }}</p>
+                                <p class="card-text">{{ $symmetricKey->transport_key_kcv }}</p>
                             </div>
                         </div>
 
@@ -85,11 +85,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($components as $component)
+                                        @foreach ($symmetricKey->components as $component)
                                             <tr>
                                                 <th scope="row">{{ $loop->iteration }}</th>
-                                                <td>{{ $component['component'] }}</td>
-                                                <td>{{ $component['kcv'] }}</td>
+                                                <td>{{ $component->getComponent() }}</td>
+                                                <td>{{ $component->kcv }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -99,11 +99,21 @@
 
                         <div class="row mb-2">
                             <div class="col-12">
-                                <button class="btn btn-outline-dark" onclick="window.location.reload()">
+                                <button
+                                    class="btn btn-outline-dark"
+                                    onclick="event.preventDefault(); if (confirm('Refresh transport key?')) { document.getElementById('RefreshForm{{ $symmetricKey->id }}').submit(); }">
                                     Refresh transport key
                                 </button>
                             </div>
                         </div>
+
+                        <form
+                            action="{{ route('admin.symmetrics.components.update', $symmetricKey) }}"
+                            id="RefreshForm{{ $symmetricKey->id }}"
+                            method="POST">
+                            @csrf
+                            @method('PATCH')
+                        </form>
                     </div>
                 </div>
             </div>
