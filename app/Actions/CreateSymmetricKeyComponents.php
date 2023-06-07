@@ -18,6 +18,7 @@ class CreateSymmetricKeyComponents
 
         $cipher = new TripleDES('ECB');
         $cipher->setKey($transportKey);
+        $cipher->disablePadding();
 
         $secret = hex2bin($symmetricKey->getKey());
 
